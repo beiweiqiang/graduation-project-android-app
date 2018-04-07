@@ -6,30 +6,17 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import model.Message;
+import okhttp3.Call;
+import okhttp3.MediaType;
+
 public class NotificationListenerExampleService extends NotificationListenerService {
   private static final String TAG = "NotificationListenerExa";
-
-  /*
-      These are the package names of the apps. for which we want to
-      listen the notifications
-   */
-//  private static final class ApplicationPackageNames {
-//    public static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
-//    public static final String FACEBOOK_MESSENGER_PACK_NAME = "com.facebook.orca";
-//    public static final String WHATSAPP_PACK_NAME = "com.whatsapp";
-//    public static final String INSTAGRAM_PACK_NAME = "com.instagram.android";
-//  }
-
-  /*
-      These are the return codes we use in the method which intercepts
-      the notifications, to decide whether we should do something or not
-   */
-//  public static final class InterceptedNotificationCode {
-//    public static final int FACEBOOK_CODE = 1;
-//    public static final int WHATSAPP_CODE = 2;
-//    public static final int INSTAGRAM_CODE = 3;
-//    public static final int OTHER_NOTIFICATIONS_CODE = 4; // We ignore all notification with code == 4
-//  }
+  private static final String url = "https://www.beiweiqiang.com/graduation/chattingHistory/save";
 
   @Override
   public IBinder onBind(Intent intent) {
@@ -49,65 +36,31 @@ public class NotificationListenerExampleService extends NotificationListenerServ
 //        发送消息到后台
         Log.d(TAG, "onNotificationPosted: " + "title -> " + title);
         Log.d(TAG, "onNotificationPosted: " + "text -> " + text);
+//        发送消息到server
+        OkHttpUtils
+            .postString()
+            .url(url)
+            .content(new Gson().toJson(new Message(1, title, text)))
+            .mediaType(MediaType.parse("application/json; charset=utf-8"))
+            .build()
+            .execute(new MyStringCallback());
       }
     }
-//    if (sbn.getNotification().tickerText != null) {
-//      Log.d(TAG, "onNotificationPosted: " + sbn.getNotification().tickerText.toString());
-//    } else {
-//      Log.d(TAG, "onNotificationPosted: sbn.getNotification().tickerText ->" + sbn.getNotification().tickerText);
-//    }
+  }
 
-//    if (sbn.getNotification().extras != null) {
-//      String title = sbn.getNotification().extras.getString("android.title");
-//      String text = sbn.getNotification().extras.getString("android.text");
-//
-//      Log.d(TAG, "onNotificationPosted: " + "title -> " + title);
-//      Log.d(TAG, "onNotificationPosted: " + "text -> " + text);
-//    } else {
-//      Log.d(TAG, "onNotificationPosted: sbn.getNotification().extras -> " + sbn.getNotification().extras);
-//    }
+  public class MyStringCallback extends StringCallback {
+    @Override
+    public void onError(Call call, Exception e, int id) {
 
-//    int notificationCode = matchNotificationCode(sbn);
-//
-//    if (notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE) {
-//      Intent intent = new Intent("com.github.chagall.notificationlistenerexample");
-//      intent.putExtra("Notification Code", notificationCode);
-//      sendBroadcast(intent);
-//    }
+    }
+
+    @Override
+    public void onResponse(String response, int id) {
+      Log.d(TAG, "onResponse: " + response);
+    }
   }
 
   @Override
   public void onNotificationRemoved(StatusBarNotification sbn) {
-//    int notificationCode = matchNotificationCode(sbn);
-//    if (notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE) {
-//
-//      StatusBarNotification[] activeNotifications = this.getActiveNotifications();
-//
-//      if (activeNotifications != null && activeNotifications.length > 0) {
-//        for (int i = 0; i < activeNotifications.length; i++) {
-//          if (notificationCode == matchNotificationCode(activeNotifications[i])) {
-//            Intent intent = new Intent("com.github.chagall.notificationlistenerexample");
-//            intent.putExtra("Notification Code", notificationCode);
-//            sendBroadcast(intent);
-//            break;
-//          }
-//        }
-//      }
-//    }
   }
-
-//  private int matchNotificationCode(StatusBarNotification sbn) {
-//    String packageName = sbn.getPackageName();
-//
-//    if (packageName.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME)
-//            || packageName.equals(ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME)) {
-//      return (InterceptedNotificationCode.FACEBOOK_CODE);
-//    } else if (packageName.equals(ApplicationPackageNames.INSTAGRAM_PACK_NAME)) {
-//      return (InterceptedNotificationCode.INSTAGRAM_CODE);
-//    } else if (packageName.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {
-//      return (InterceptedNotificationCode.WHATSAPP_CODE);
-//    } else {
-//      return (InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);
-//    }
-//  }
 }

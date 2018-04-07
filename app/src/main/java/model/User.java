@@ -1,4 +1,4 @@
-package com.github.chagall.notificationlistenerexample;
+package model;
 
 public class User {
   private String username;

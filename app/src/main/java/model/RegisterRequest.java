@@ -1,4 +1,4 @@
-package com.github.chagall.notificationlistenerexample;
+package model;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
