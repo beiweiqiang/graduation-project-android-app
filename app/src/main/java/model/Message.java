@@ -1,15 +1,15 @@
 package model;
 
 public class Message {
-  private int userId;
+  private String userId;
   private String originTitle;
   private String originContent;
 
-  public int getUserId() {
+  public String getUserId() {
     return userId;
   }
 
-  public void setUserId(int userId) {
+  public void setUserId(String userId) {
     this.userId = userId;
   }
 
@@ -29,7 +29,7 @@ public class Message {
     this.originContent = originContent;
   }
 
-  public Message(int userId, String originTitle, String originContent) {
+  public Message(String userId, String originTitle, String originContent) {
 
     this.userId = userId;
     this.originTitle = originTitle;
